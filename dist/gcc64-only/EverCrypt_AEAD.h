@@ -38,8 +38,12 @@
 #include "EverCrypt_Error.h"
 #include "Hacl_Spec.h"
 
-
-typedef struct EverCrypt_AEAD_state_s_s EverCrypt_AEAD_state_s;
+typedef struct EverCrypt_AEAD_state_s_s
+{
+  Spec_Cipher_Expansion_impl impl;
+  uint8_t *ek;
+}
+EverCrypt_AEAD_state_s;
 
 bool EverCrypt_AEAD_uu___is_Ek(Spec_Agile_AEAD_alg a, EverCrypt_AEAD_state_s projectee);
 
