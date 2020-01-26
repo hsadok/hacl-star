@@ -184,8 +184,8 @@ EverCrypt_AEAD_create_in(Spec_Agile_AEAD_alg a, EverCrypt_AEAD_state_s **dst, ui
   }
 }
 
-static EverCrypt_Error_error_code
-encrypt_aes128_gcm(
+static inline EverCrypt_Error_error_code
+__encrypt_aes128_gcm(
   EverCrypt_AEAD_state_s *s,
   uint8_t *iv,
   uint32_t iv_len,
@@ -194,7 +194,9 @@ encrypt_aes128_gcm(
   uint8_t *plain,
   uint32_t plain_len,
   uint8_t *cipher,
-  uint8_t *tag
+  uint8_t *tag,
+  bool save_ghash,
+  uint8_t* ghash
 )
 {
   if (s == NULL)
@@ -242,25 +244,47 @@ encrypt_aes128_gcm(
     uint64_t auth_num = (uint64_t)ad_len / (uint64_t)16U;
     uint64_t len128x6_ = len128x6 / (uint64_t)16U;
     uint64_t len128_num_ = len128_num / (uint64_t)16U;
-    uint64_t
-    scrut0 =
-      gcm128_encrypt_opt(auth_b_,
-        (uint64_t)ad_len,
-        auth_num,
-        keys_b,
-        tmp_iv,
-        hkeys_b,
-        abytes_b,
-        in128x6_b,
-        out128x6_b,
-        len128x6_,
-        in128_b,
-        out128_b,
-        len128_num_,
-        inout_b,
-        (uint64_t)plain_len,
-        scratch_b1,
-        tag);
+    uint64_t scrut0;
+    if (save_ghash) {
+      scrut0 =
+        gcm128_encrypt_opt_save_ghash(auth_b_,
+          (uint64_t)ad_len,
+          auth_num,
+          keys_b,
+          tmp_iv,
+          hkeys_b,
+          abytes_b,
+          in128x6_b,
+          out128x6_b,
+          len128x6_,
+          in128_b,
+          out128_b,
+          len128_num_,
+          inout_b,
+          (uint64_t)plain_len,
+          scratch_b1,
+          tag,
+          ghash);
+    } else {
+      scrut0 =
+        gcm128_encrypt_opt(auth_b_,
+          (uint64_t)ad_len,
+          auth_num,
+          keys_b,
+          tmp_iv,
+          hkeys_b,
+          abytes_b,
+          in128x6_b,
+          out128x6_b,
+          len128x6_,
+          in128_b,
+          out128_b,
+          len128_num_,
+          inout_b,
+          (uint64_t)plain_len,
+          scratch_b1,
+          tag);
+    }
   }
   else
   {
@@ -273,30 +297,109 @@ encrypt_aes128_gcm(
     uint64_t auth_num = (uint64_t)ad_len / (uint64_t)16U;
     uint64_t len128_num_ = len128_num / (uint64_t)16U;
     uint64_t len128x6_ = (uint64_t)0U;
-    uint64_t
-    scrut0 =
-      gcm128_encrypt_opt(auth_b_,
-        (uint64_t)ad_len,
-        auth_num,
-        keys_b,
-        tmp_iv,
-        hkeys_b,
-        abytes_b,
-        in128x6_b,
-        out128x6_b,
-        len128x6_,
-        in128_b,
-        out128_b,
-        len128_num_,
-        inout_b,
-        (uint64_t)plain_len,
-        scratch_b1,
-        tag);
+    uint64_t scrut0 ;
+    if (save_ghash) {
+      scrut0 =
+        gcm128_encrypt_opt_save_ghash(auth_b_,
+          (uint64_t)ad_len,
+          auth_num,
+          keys_b,
+          tmp_iv,
+          hkeys_b,
+          abytes_b,
+          in128x6_b,
+          out128x6_b,
+          len128x6_,
+          in128_b,
+          out128_b,
+          len128_num_,
+          inout_b,
+          (uint64_t)plain_len,
+          scratch_b1,
+          tag,
+          ghash);
+    } else {
+      scrut0 =
+        gcm128_encrypt_opt(auth_b_,
+          (uint64_t)ad_len,
+          auth_num,
+          keys_b,
+          tmp_iv,
+          hkeys_b,
+          abytes_b,
+          in128x6_b,
+          out128x6_b,
+          len128x6_,
+          in128_b,
+          out128_b,
+          len128_num_,
+          inout_b,
+          (uint64_t)plain_len,
+          scratch_b1,
+          tag);
+    }
   }
   memcpy(cipher + (uint32_t)(uint64_t)plain_len / (uint32_t)16U * (uint32_t)16U,
     inout_b,
     (uint32_t)(uint64_t)plain_len % (uint32_t)16U * sizeof (inout_b[0U]));
   return EverCrypt_Error_Success;
+}
+
+EverCrypt_Error_error_code
+encrypt_aes128_gcm(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag
+)
+{
+  return __encrypt_aes128_gcm(
+    s,
+    iv,
+    iv_len,
+    ad,
+    ad_len,
+    plain,
+    plain_len,
+    cipher,
+    tag,
+    false,
+    NULL
+  );
+}
+
+EverCrypt_Error_error_code
+encrypt_aes128_gcm_save_ghash(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag,
+  uint8_t* ghash
+)
+{
+  return __encrypt_aes128_gcm(
+    s,
+    iv,
+    iv_len,
+    ad,
+    ad_len,
+    plain,
+    plain_len,
+    cipher,
+    tag,
+    true,
+    ghash
+  );
 }
 
 static EverCrypt_Error_error_code

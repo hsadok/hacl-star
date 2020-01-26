@@ -150,6 +150,28 @@ gcm128_encrypt_opt(
 );
 
 extern uint64_t
+gcm128_encrypt_opt_save_ghash(
+  uint8_t *x0,
+  uint64_t x1,
+  uint64_t x2,
+  uint8_t *x3,
+  uint8_t *x4,
+  uint8_t *x5,
+  uint8_t *x6,
+  uint8_t *x7,
+  uint8_t *x8,
+  uint64_t x9,
+  uint8_t *x10,
+  uint8_t *x11,
+  uint64_t x12,
+  uint8_t *x13,
+  uint64_t x14,
+  uint8_t *x15,
+  uint8_t *x16,
+  uint8_t *x17
+);
+
+extern uint64_t
 gcm256_encrypt_opt(
   uint8_t *x0,
   uint64_t x1,

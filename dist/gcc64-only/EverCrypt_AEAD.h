@@ -67,6 +67,35 @@ EverCrypt_AEAD_encrypt(
   uint8_t *tag
 );
 
+// Spec_Cipher_Expansion_Vale_AES128
+EverCrypt_Error_error_code
+encrypt_aes128_gcm(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag
+);
+
+// Spec_Cipher_Expansion_Vale_AES128 and saves ghash
+EverCrypt_Error_error_code
+encrypt_aes128_gcm_save_ghash(
+  EverCrypt_AEAD_state_s *s,
+  uint8_t *iv,
+  uint32_t iv_len,
+  uint8_t *ad,
+  uint32_t ad_len,
+  uint8_t *plain,
+  uint32_t plain_len,
+  uint8_t *cipher,
+  uint8_t *tag,
+  uint8_t* ghash
+);
+
 EverCrypt_Error_error_code
 EverCrypt_AEAD_decrypt(
   EverCrypt_AEAD_state_s *s,
