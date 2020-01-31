@@ -1447,7 +1447,7 @@ L97:
   movdqu 160(%r8), %xmm2
   aesenclast %xmm2, %xmm0
   pxor %xmm2, %xmm2
-  pshufb %xmm9, %xmm8 # TODO(sadok) check if we should save before this
+  pshufb %xmm9, %xmm8
   mov 160(%rsp), %r15   # address of ghash
   movdqu %xmm8, 0(%r15) # Saving ghash
   pxor %xmm0, %xmm8
@@ -1462,4 +1462,3 @@ L97:
   pop %r14
   pop %r15
   ret
-
