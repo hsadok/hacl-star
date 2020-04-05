@@ -5,7 +5,7 @@
 #include <openssl/ec.h>
 #include <openssl/ecdh.h>
 #include <inttypes.h>
-#include <stdio.h>
+// #include <stdio.h>
 
 #include "kremlin/internal/target.h"
 #include "EverCrypt_OpenSSL.h"
@@ -19,9 +19,7 @@
  * Then at the boundary we could catch the error, print it, then exit abruptly. */
 
 #define handleErrors(...)                                                      \
-  do {                                                                         \
-    fprintf(stderr, "Error at %s:%d\n", __FILE__, __LINE__);                   \
-  } while (0)
+  do {  } while (0)
 
 
 /* OpenSSL PRNG */

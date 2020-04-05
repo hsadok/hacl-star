@@ -39,9 +39,7 @@
  * */
 
 #define handleErrors(...)                                                      \
-  do {                                                                         \
-    fprintf(stderr, "Error at %s:%d\n", __FILE__, __LINE__);                   \
-  } while (0)
+  do {  } while (0)
 
 #if IS_WINDOWS
 
