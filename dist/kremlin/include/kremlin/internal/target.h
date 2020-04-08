@@ -18,9 +18,9 @@
 
 /* For "bare" targets that do not have a C stdlib, the user might want to use
  * [-add-early-include '"mydefinitions.h"'] and override these. */
-#ifndef KRML_HOST_PRINTF
-#  define KRML_HOST_PRINTF printf
-#endif
+// #ifndef KRML_HOST_PRINTF
+// #  define KRML_HOST_PRINTF printf
+// #endif
 
 #if (                                                                          \
     (defined __STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) &&             \
@@ -28,20 +28,58 @@
 #  define KRML_HOST_EPRINTF(...) fprintf(stderr, __VA_ARGS__)
 #endif
 
+
+extern void* (*ec_malloc)(size_t);
+extern void (*ec_free)(void*);
+
+inline void* ec_calloc(size_t nmemb, size_t size)
+{
+  size_t buffer_sz = nmemb * size;
+  uint8_t* ptr = ec_malloc(buffer_sz);
+  for (size_t i = 0; i < buffer_sz; ++i) {
+    ptr[i] = (uint8_t) 0;
+  }
+  return (void*) ptr;
+}
+
+#ifndef KRML_HOST_PRINTF
+inline int dummy_printf(__attribute__ ((unused)) const char* a, ...) {
+  return 0;
+}
+#  define KRML_HOST_PRINTF dummy_printf
+#endif
+
+inline void dummy_exit() {
+  __builtin_trap();
+  __builtin_unreachable ();
+}
+
+inline void* dummy_malloc(__attribute__ ((unused)) size_t a) {
+  return NULL;
+}
+
+inline void* dummy_calloc(__attribute__ ((unused)) size_t a, __attribute__ ((unused)) size_t b) {
+  return NULL;
+}
+
+inline void dummy_free(__attribute__ ((unused)) void* a) {
+}
+
 #ifndef KRML_HOST_EXIT
-#  define KRML_HOST_EXIT exit
+#  define KRML_HOST_EXIT(X) dummy_exit();\
+ __builtin_unreachable();
 #endif
 
 #ifndef KRML_HOST_MALLOC
-#  define KRML_HOST_MALLOC malloc
+#  define KRML_HOST_MALLOC ec_malloc
 #endif
 
 #ifndef KRML_HOST_CALLOC
-#  define KRML_HOST_CALLOC calloc
+#  define KRML_HOST_CALLOC ec_calloc
 #endif
 
 #ifndef KRML_HOST_FREE
-#  define KRML_HOST_FREE free
+#  define KRML_HOST_FREE ec_free
 #endif
 
 #ifndef KRML_HOST_TIME
@@ -59,7 +97,6 @@ inline static int32_t krml_time() {
 /* In statement position, exiting is easy. */
 #define KRML_EXIT                                                              \
   do {                                                                         \
-    KRML_HOST_PRINTF("Unimplemented function at %s:%d\n", __FILE__, __LINE__); \
     KRML_HOST_EXIT(254);                                                       \
   } while (0)
 
@@ -67,8 +104,7 @@ inline static int32_t krml_time() {
  * expression of the right size. KreMLin passes t as the parameter to the macro.
  */
 #define KRML_EABORT(t, msg)                                                    \
-  (KRML_HOST_PRINTF("KreMLin abort at %s:%d\n%s\n", __FILE__, __LINE__, msg),  \
-   KRML_HOST_EXIT(255), *((t *)KRML_HOST_MALLOC(sizeof(t))))
+  (dummy_exit(), *((t *)dummy_malloc(sizeof(t))))
 
 /* In FStar.Buffer.fst, the size of arrays is uint32_t, but it's a number of
  * *elements*. Do an ugly, run-time check (some of which KreMLin can eliminate).

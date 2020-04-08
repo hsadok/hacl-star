@@ -64,7 +64,10 @@ bool EverCrypt_AutoConfig2_wants_bcrypt();
 
 void EverCrypt_AutoConfig2_recall();
 
-void EverCrypt_AutoConfig2_init();
+void EverCrypt_AutoConfig2_init(
+  void* (*malloc_ptr)(size_t),
+  void (*free_ptr)(void*)
+);
 
 typedef void (*EverCrypt_AutoConfig2_disabler)();
 

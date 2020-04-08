@@ -24,6 +24,9 @@
 
 #include "EverCrypt_AutoConfig2.h"
 
+void* (*ec_malloc)(size_t);
+void (*ec_free)(void*);
+
 static bool cpu_has_shaext[1U] = { false };
 
 static bool cpu_has_aesni[1U] = { false };
@@ -127,8 +130,14 @@ void EverCrypt_AutoConfig2_recall()
   
 }
 
-void EverCrypt_AutoConfig2_init()
+void EverCrypt_AutoConfig2_init(
+  void* (*malloc_ptr)(size_t),
+  void (*free_ptr)(void*)
+)
 {
+  ec_malloc = malloc_ptr;
+  ec_free = free_ptr;
+
   #if EVERCRYPT_TARGETCONFIG_X64
   uint64_t scrut = check_aesni();
   if (scrut != (uint64_t)0U)
