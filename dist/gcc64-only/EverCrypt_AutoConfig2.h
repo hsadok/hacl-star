@@ -66,7 +66,8 @@ void EverCrypt_AutoConfig2_recall();
 
 void EverCrypt_AutoConfig2_init(
   void* (*malloc_ptr)(size_t),
-  void (*free_ptr)(void*)
+  void (*free_ptr)(void*),
+  bool skip_feature_check
 );
 
 typedef void (*EverCrypt_AutoConfig2_disabler)();

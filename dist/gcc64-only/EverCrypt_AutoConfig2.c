@@ -132,56 +132,70 @@ void EverCrypt_AutoConfig2_recall()
 
 void EverCrypt_AutoConfig2_init(
   void* (*malloc_ptr)(size_t),
-  void (*free_ptr)(void*)
+  void (*free_ptr)(void*),
+  bool skip_feature_check
 )
 {
   ec_malloc = malloc_ptr;
   ec_free = free_ptr;
 
-  #if EVERCRYPT_TARGETCONFIG_X64
-  uint64_t scrut = check_aesni();
-  if (scrut != (uint64_t)0U)
-  {
+  if (skip_feature_check) {
     cpu_has_aesni[0U] = true;
     cpu_has_pclmulqdq[0U] = true;
-  }
-  uint64_t scrut0 = check_sha();
-  if (scrut0 != (uint64_t)0U)
-  {
-    cpu_has_shaext[0U] = true;
-  }
-  uint64_t scrut1 = check_adx_bmi2();
-  if (scrut1 != (uint64_t)0U)
-  {
+    cpu_has_shaext[0U] = false;
     cpu_has_bmi2[0U] = true;
     cpu_has_adx[0U] = true;
-  }
-  uint64_t scrut2 = check_avx();
-  if (scrut2 != (uint64_t)0U)
-  {
     cpu_has_avx[0U] = true;
-  }
-  uint64_t scrut3 = check_avx2();
-  if (scrut3 != (uint64_t)0U)
-  {
     cpu_has_avx2[0U] = true;
-  }
-  uint64_t scrut4 = check_sse();
-  if (scrut4 != (uint64_t)0U)
-  {
     cpu_has_sse[0U] = true;
-  }
-  uint64_t scrut5 = check_movbe();
-  if (scrut5 != (uint64_t)0U)
-  {
     cpu_has_movbe[0U] = true;
-  }
-  uint64_t scrut6 = check_rdrand();
-  if (scrut6 != (uint64_t)0U)
-  {
     cpu_has_rdrand[0U] = true;
+  } else {
+    #if EVERCRYPT_TARGETCONFIG_X64
+    uint64_t scrut = check_aesni();
+    if (scrut != (uint64_t)0U)
+    {
+      cpu_has_aesni[0U] = true;
+      cpu_has_pclmulqdq[0U] = true;
+    }
+    uint64_t scrut0 = check_sha();
+    if (scrut0 != (uint64_t)0U)
+    {
+      cpu_has_shaext[0U] = true;
+    }
+    uint64_t scrut1 = check_adx_bmi2();
+    if (scrut1 != (uint64_t)0U)
+    {
+      cpu_has_bmi2[0U] = true;
+      cpu_has_adx[0U] = true;
+    }
+    uint64_t scrut2 = check_avx();
+    if (scrut2 != (uint64_t)0U)
+    {
+      cpu_has_avx[0U] = true;
+    }
+    uint64_t scrut3 = check_avx2();
+    if (scrut3 != (uint64_t)0U)
+    {
+      cpu_has_avx2[0U] = true;
+    }
+    uint64_t scrut4 = check_sse();
+    if (scrut4 != (uint64_t)0U)
+    {
+      cpu_has_sse[0U] = true;
+    }
+    uint64_t scrut5 = check_movbe();
+    if (scrut5 != (uint64_t)0U)
+    {
+      cpu_has_movbe[0U] = true;
+    }
+    uint64_t scrut6 = check_rdrand();
+    if (scrut6 != (uint64_t)0U)
+    {
+      cpu_has_rdrand[0U] = true;
+    }
+    #endif
   }
-  #endif
   user_wants_hacl[0U] = true;
   user_wants_vale[0U] = true;
   user_wants_bcrypt[0U] = false;
