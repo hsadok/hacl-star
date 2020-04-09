@@ -22,10 +22,15 @@
 // #  define KRML_HOST_PRINTF printf
 // #endif
 
+inline int dummy_printf(__attribute__ ((unused)) const char* a, ...) {
+  return 0;
+}
+
 #if (                                                                          \
     (defined __STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) &&             \
     (!(defined KRML_HOST_EPRINTF)))
-#  define KRML_HOST_EPRINTF(...) fprintf(stderr, __VA_ARGS__)
+// #  define KRML_HOST_EPRINTF(...) fprintf(stderr, __VA_ARGS__)
+#  define KRML_HOST_EPRINTF(...) dummy_printf
 #endif
 
 
@@ -43,9 +48,7 @@ inline void* ec_calloc(size_t nmemb, size_t size)
 }
 
 #ifndef KRML_HOST_PRINTF
-inline int dummy_printf(__attribute__ ((unused)) const char* a, ...) {
-  return 0;
-}
+
 #  define KRML_HOST_PRINTF dummy_printf
 #endif
 
