@@ -76,7 +76,7 @@ OBJS 		+= $(patsubst %.S,%.o,$(wildcard *-$(MARCH)$(VARIANT).S))
 
 include Makefile.basic
 
-CFLAGS		+= -Wno-parentheses -Wno-deprecated-declarations -g -std=gnu11 -O3
+CFLAGS		+= -Wno-parentheses -Wno-deprecated-declarations -g -std=gnu11 -O3 -fno-stack-protector
 
 Hacl_Poly1305_128.o Hacl_Chacha20_Vec128.o Hacl_Chacha20Poly1305_128.o: CFLAGS += -mavx
 Hacl_Poly1305_256.o Hacl_Chacha20_Vec256.o Hacl_Chacha20Poly1305_256.o: CFLAGS += -mavx -mavx2

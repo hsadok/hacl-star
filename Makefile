@@ -954,7 +954,7 @@ endif
 LDFLAGS 	+= -L$(OPENSSL_HOME)
 
 CFLAGS += -Wall -Wextra -g \
-  -Wno-int-conversion -Wno-unused-parameter \
+  -Wno-int-conversion -Wno-unused-parameter -fno-stack-protector \
   -O3 -march=native -mtune=native -I$(KREMLIN_HOME)/kremlib/dist/minimal \
   -I$(KREMLIN_HOME)/include
 
